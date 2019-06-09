@@ -31,7 +31,7 @@ namespace FirstApi.Controllers
             {
                 // ... Read the string.
                 string result = content.ReadAsStringAsync().Result;
-                return result +"And I'm in teh first API";
+                return result +"And I'm in teh first AP dI";
             }
         }
 
