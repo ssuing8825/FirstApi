@@ -1,0 +1,76 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: secondapi
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: secondapi
+    spec:
+      containers:
+      - name: secondapi
+        image: suingacr.azurecr.io/secondapi:v1
+        ports:
+        - containerPort: 4040
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: secondapi
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 4040
+  selector:
+    app: secondapi
+---   
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: firstapi
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: firstapi
+    spec:
+      containers:
+      - name: firstapi
+        image: suingacr.azurecr.io/firstapi:v2
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firstapi
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: firstapi
